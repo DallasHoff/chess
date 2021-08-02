@@ -1,0 +1,70 @@
+.App {
+    width: var(--app-width);
+    max-width: var(--app-max-width);
+    padding: var(--app-padding);
+    margin: auto;
+}
+
+.Board {
+    height: calc(var(--app-width) - (var(--app-padding) * 2));
+    max-height: calc(var(--app-max-width) - (var(--app-padding) * 2));
+    &__inner {
+        display: grid;
+        height: 100%;
+        grid-template-columns: repeat(8, minmax(0, 1fr));
+        grid-template-rows: repeat(8, minmax(0, 1fr));
+    }
+}
+
+.Tile {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    // Light tile color
+    background-color: var(--tile-light);
+    // Dark tile color
+    @each $i in 2, 4, 6, 8, 9, 11, 13, 15 {
+        &:nth-child(16n + #{$i}) {
+            background-color: var(--tile-dark);
+        }
+    }
+    // Valid move indicator
+    &__indicator {
+        position: absolute;
+        width: 45%;
+        height: 45%;
+        border-radius: 50%;
+        background-color: var(--indicator-color);
+    }
+}
+
+.Piece {
+    font-size: 1em;
+    &__icon {
+        &--white {
+            color: var(--piece-light);
+        }
+        &--black {
+            color: var(--piece-dark);
+        }
+    }
+}
+
+@media screen and (min-width: 360px) {
+    .Piece {
+        font-size: 1.5em;
+    }
+}
+
+@media screen and (min-width: 540px) {
+    .Piece {
+        font-size: 2em;
+    }
+}
+
+@media screen and (min-width: 720px) {
+    .Piece {
+        font-size: 2.5em;
+    }
+}
