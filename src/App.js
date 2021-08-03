@@ -33,10 +33,12 @@ export default function App() {
       setMovingPiece(null);
       updateBoard();
       // Do computer's move
-      setTimeout(() => {
-        Chess.aiMove(aiLevel);
-        updateBoard();
-      }, MOVE_DELAY_SECS * 1000);
+      if (!board.isFinished) {
+        setTimeout(() => {
+          Chess.aiMove(aiLevel);
+          updateBoard();
+        }, MOVE_DELAY_SECS * 1000);
+      }
     } else if (movingPiece && color === board.turn) {
       // Pick up different piece
       setMovingPiece(tile);
