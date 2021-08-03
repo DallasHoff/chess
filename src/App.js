@@ -1,11 +1,13 @@
 import './App.scss';
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faChessPawn, faChessKnight, faChessBishop, faChessRook, faChessQueen, faChessKing } from '@fortawesome/free-solid-svg-icons';
 import { Game } from 'js-chess-engine';
 
 const ROWS = ['8', '7', '6', '5', '4', '3', '2', '1'];
 const COLS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+const PLAYER_COLOR = 'white';
+const MOVE_DELAY_SECS = 1;
 
 const Chess = new Game();
 const BoardContext = React.createContext();
@@ -20,8 +22,8 @@ export default function App() {
   const move = (tile, color, isValid) => {
     // Check if piece is being picked up or moved
     if (!movingPiece) {
-      // Check if it is the player's turn
-      if (color === board.turn) {
+      // Check if it is the player's turn and the piece belongs to them
+      if (board.turn === PLAYER_COLOR && color === board.turn) {
         // Pick up piece
         setMovingPiece(tile);
       }
@@ -29,9 +31,12 @@ export default function App() {
       // Move piece to the tile
       Chess.move(movingPiece, tile);
       setMovingPiece(null);
-      // Do computer's move
-      Chess.aiMove(aiLevel);
       updateBoard();
+      // Do computer's move
+      setTimeout(() => {
+        Chess.aiMove(aiLevel);
+        updateBoard();
+      }, MOVE_DELAY_SECS * 1000);
     } else if (movingPiece && color === board.turn) {
       // Pick up different piece
       setMovingPiece(tile);
@@ -66,6 +71,7 @@ function Board() {
 
 function Tile({pos}) {
   const { board, move, movingPiece } = useContext(BoardContext);
+  const tileRef = useRef();
   const [pieceSymbol, setPieceSymbol] = useState(null);
   const [pieceColor, setPieceColor] = useState(null);
   const [isValidMove, setIsValidMove] = useState(false);
@@ -87,9 +93,9 @@ function Tile({pos}) {
   }, [pos, board, movingPiece]);
 
   return (
-    <div className="Tile" data-pos={pos} onClick={() => move(pos, pieceColor, isValidMove)}>
+    <div className="Tile" ref={tileRef} data-pos={pos} onClick={() => move(pos, pieceColor, isValidMove)}>
       {pieceSymbol && 
-        <Piece symbol={pieceSymbol} color={pieceColor} />
+        <Piece pos={pos} symbol={pieceSymbol} color={pieceColor} tileRef={tileRef} />
       }
       {isValidMove && 
         <div className="Tile__indicator"></div>
@@ -99,7 +105,8 @@ function Tile({pos}) {
 }
 
 
-function Piece({symbol, color}) {
+function Piece({pos, symbol, color, tileRef}) {
+  const pieceRef = useRef();
   const [icon, setIcon] = useState(faChessPawn);
   const [classes, setClasses] = useState('');
 
@@ -117,8 +124,44 @@ function Piece({symbol, color}) {
     setClasses(`Piece__icon Piece__icon--${color} fa-fw`);
   }, [symbol, color]);
 
+  // Get numeric coordinates from tile position
+  const tileCoors = (tile) => {
+    const [tileCol, tileRow] = tile.split('');
+    const tileCoorX = COLS.indexOf(tileCol);
+    const tileCoorY = ROWS.indexOf(tileRow);
+    return [tileCoorX, tileCoorY];
+  }
+
+  // Animate when position changes
+  useEffect(() => {
+    // Determine piece's previous position
+    let from = null;
+    if (Chess.getHistory().length) {
+      const reversedHistory = Chess.getHistory().slice().reverse();
+      const prevMove = reversedHistory.find(v => v.to === pos);
+      from = prevMove?.from;
+    }
+    if (!from) return;
+    // Calculate pixel counts to translate piece by
+    const tileSize = tileRef.current.offsetWidth;
+    const [fromX, fromY] = tileCoors(from);
+    const [toX, toY] = tileCoors(pos);
+    const diffX = (fromX - toX) * tileSize;
+    const diffY = (fromY - toY) * tileSize;
+    // Do animation
+    pieceRef.current.style.animation = 'none';
+    void(pieceRef.current.offsetWidth); // trigger reflow to reset animation
+    pieceRef.current.style.animation = null;
+    pieceRef.current.style.transform = `translate(${diffX}px, ${diffY}px)`;
+  }, [pos, tileRef, color]);
+
+  // Make visible with effect to prevent flash on initial render before animation
+  useEffect(() => {
+    pieceRef.current.style.opacity = '1';
+  });
+
   return (
-    <div className="Piece">
+    <div className="Piece" ref={pieceRef} style={{opacity: 0}}>
       <Icon icon={icon} className={classes} />
     </div>
   );

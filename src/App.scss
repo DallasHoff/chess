@@ -41,6 +41,8 @@
 
 .Piece {
     font-size: 1em;
+    animation: move-piece 1s forwards;
+    z-index: 1;
     &__icon {
         &--white {
             color: var(--piece-light);
@@ -66,5 +68,11 @@
 @media screen and (min-width: 720px) {
     .Piece {
         font-size: 2.5em;
+    }
+}
+
+@keyframes move-piece {
+    to {
+        transform: translate(0, 0);
     }
 }
