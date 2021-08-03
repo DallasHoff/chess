@@ -5,6 +5,7 @@
     margin: auto;
 }
 
+
 .Board {
     height: calc(var(--app-width) - (var(--app-padding) * 2));
     max-height: calc(var(--app-max-width) - (var(--app-padding) * 2));
@@ -15,6 +16,7 @@
         grid-template-rows: repeat(8, minmax(0, 1fr));
     }
 }
+
 
 .Tile {
     position: relative;
@@ -39,11 +41,12 @@
     }
 }
 
+
 .Piece {
-    font-size: 1em;
     animation: move-piece 1s forwards;
     z-index: 1;
     &__icon {
+        font-size: 1em;
         &--white {
             color: var(--piece-light);
         }
@@ -54,19 +57,19 @@
 }
 
 @media screen and (min-width: 360px) {
-    .Piece {
+    .Piece__icon {
         font-size: 1.5em;
     }
 }
 
 @media screen and (min-width: 540px) {
-    .Piece {
+    .Piece__icon {
         font-size: 2em;
     }
 }
 
 @media screen and (min-width: 720px) {
-    .Piece {
+    .Piece__icon {
         font-size: 2.5em;
     }
 }
@@ -74,5 +77,17 @@
 @keyframes move-piece {
     to {
         transform: translate(0, 0);
+    }
+}
+
+
+.TakenPieces {
+    margin-top: calc(var(--app-padding) / 2);
+    padding: calc(var(--app-padding) / 2);
+    &--white {
+        background-color: var(--tile-dark);
+    }
+    &--black {
+        background-color: var(--tile-light);
     }
 }

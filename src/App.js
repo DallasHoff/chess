@@ -6,8 +6,20 @@ import { Game } from 'js-chess-engine';
 
 const ROWS = ['8', '7', '6', '5', '4', '3', '2', '1'];
 const COLS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+const PIECES = {
+  black: ['k', 'q', 'r', 'r', 'b', 'b', 'n', 'n', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
+  white: ['K', 'Q', 'R', 'R', 'B', 'B', 'N', 'N', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P']
+};
 const PLAYER_COLOR = 'white';
 const MOVE_DELAY_SECS = 1;
+const PIECE_ICONS = {
+  p: faChessPawn,
+  n: faChessKnight,
+  b: faChessBishop,
+  r: faChessRook,
+  q: faChessQueen,
+  k: faChessKing
+};
 
 const Chess = new Game();
 const BoardContext = React.createContext();
@@ -50,6 +62,8 @@ export default function App() {
       <BoardContext.Provider value={{ board, move, movingPiece }}>
         <Board />
         {(board.checkMate && 'Checkmate!') || (board.check && 'Check!')}
+        <TakenPieces color="black" />
+        <TakenPieces color="white" />
       </BoardContext.Provider>
     </div>
   );
@@ -97,7 +111,7 @@ function Tile({pos}) {
   return (
     <div className="Tile" ref={tileRef} data-pos={pos} onClick={() => move(pos, pieceColor, isValidMove)}>
       {pieceSymbol && 
-        <Piece pos={pos} symbol={pieceSymbol} color={pieceColor} tileRef={tileRef} />
+        <Piece pos={pos} symbol={pieceSymbol} color={pieceColor} tileRef={tileRef} animate />
       }
       {isValidMove && 
         <div className="Tile__indicator"></div>
@@ -107,22 +121,14 @@ function Tile({pos}) {
 }
 
 
-function Piece({pos, symbol, color, tileRef}) {
+function Piece({pos, symbol, color, tileRef, animate, size}) {
   const pieceRef = useRef();
   const [icon, setIcon] = useState(faChessPawn);
   const [classes, setClasses] = useState('');
 
   // Update piece icon, color, and classes
   useEffect(() => {
-    const ICONS = {
-      p: faChessPawn,
-      n: faChessKnight,
-      b: faChessBishop,
-      r: faChessRook,
-      q: faChessQueen,
-      k: faChessKing
-    };
-    setIcon(ICONS[symbol.toLowerCase()]);
+    setIcon(PIECE_ICONS[symbol.toLowerCase()]);
     setClasses(`Piece__icon Piece__icon--${color} fa-fw`);
   }, [symbol, color]);
 
@@ -136,6 +142,7 @@ function Piece({pos, symbol, color, tileRef}) {
 
   // Animate when position changes
   useLayoutEffect(() => {
+    if (!animate) return;
     // Determine piece's previous position
     let from = null;
     if (Chess.getHistory().length) {
@@ -155,11 +162,43 @@ function Piece({pos, symbol, color, tileRef}) {
     void(pieceRef.current.offsetWidth); // trigger reflow to reset animation
     pieceRef.current.style.animation = null;
     pieceRef.current.style.transform = `translate(${diffX}px, ${diffY}px)`;
-  }, [pos, tileRef, color]);
+  }, [pos, tileRef, color, animate]);
 
   return (
-    <div className="Piece" ref={pieceRef}>
+    <span className="Piece" ref={pieceRef} style={{fontSize: size || '1em'}}>
       <Icon icon={icon} className={classes} />
+    </span>
+  );
+}
+
+
+function TakenPieces({color}) {
+  const { board } = useContext(BoardContext);
+  const [pieces, setPieces] = useState([]);
+
+  // Determine which pieces are not on the board
+  useEffect(() => {
+    const taken = [];
+    const colorPieces = PIECES[color];
+    const boardPieces = Object.values(board.pieces);
+    colorPieces.forEach((piece, index) => {
+      const pieceIndex = boardPieces.indexOf(piece);
+      if (pieceIndex < 0) {
+        // Taken: add to list (with index for key)
+        taken.push({piece, index});
+      } else {
+        // Still on board: remove from search
+        boardPieces.splice(pieceIndex, 1);
+      }
+    });
+    setPieces(taken);
+  }, [board, color]);
+
+  return (
+    <div className={`TakenPieces TakenPieces--${color}`}>
+      {pieces.map(({piece, index}) => (
+        <Piece key={piece + index} symbol={piece} color={color} />
+      ))}
     </div>
   );
 }
