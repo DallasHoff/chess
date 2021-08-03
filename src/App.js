@@ -1,5 +1,5 @@
 import './App.scss';
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext, useRef, useLayoutEffect } from 'react';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faChessPawn, faChessKnight, faChessBishop, faChessRook, faChessQueen, faChessKing } from '@fortawesome/free-solid-svg-icons';
 import { Game } from 'js-chess-engine';
@@ -133,7 +133,7 @@ function Piece({pos, symbol, color, tileRef}) {
   }
 
   // Animate when position changes
-  useEffect(() => {
+  useLayoutEffect(() => {
     // Determine piece's previous position
     let from = null;
     if (Chess.getHistory().length) {
@@ -155,13 +155,8 @@ function Piece({pos, symbol, color, tileRef}) {
     pieceRef.current.style.transform = `translate(${diffX}px, ${diffY}px)`;
   }, [pos, tileRef, color]);
 
-  // Make visible with effect to prevent flash on initial render before animation
-  useEffect(() => {
-    pieceRef.current.style.opacity = '1';
-  });
-
   return (
-    <div className="Piece" ref={pieceRef} style={{opacity: 0}}>
+    <div className="Piece" ref={pieceRef}>
       <Icon icon={icon} className={classes} />
     </div>
   );
