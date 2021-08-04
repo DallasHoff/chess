@@ -47,18 +47,21 @@ export default function App() {
       Chess.move(movingPiece, tile);
       setMovingPiece(null);
       updateBoard();
-      // Do computer's move
-      if (!board.isFinished) {
-        setTimeout(() => {
-          Chess.aiMove(aiLevel);
-          updateBoard();
-        }, MOVE_DELAY_SECS * 1000);
-      }
     } else if (movingPiece && color === board.turn) {
       // Pick up different piece
       setMovingPiece(tile);
     }
   }
+
+  // After player moves, do AI's move if the player did not just win
+  useEffect(() => {
+    if (board.turn !== PLAYER_COLOR && !board.isFinished) {
+      setTimeout(() => {
+        Chess.aiMove(aiLevel);
+        updateBoard();
+      }, MOVE_DELAY_SECS * 1000);
+    }
+  }, [board, aiLevel]);
 
   return (
     <div className="App">
