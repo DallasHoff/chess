@@ -1,8 +1,9 @@
-import './App.scss';
 import React, { useState, useEffect, useContext, useRef, useLayoutEffect } from 'react';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faChessPawn, faChessKnight, faChessBishop, faChessRook, faChessQueen, faChessKing } from '@fortawesome/free-solid-svg-icons';
 import { Game } from 'js-chess-engine';
+import './App.scss';
+
 
 const ROWS = ['8', '7', '6', '5', '4', '3', '2', '1'];
 const COLS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
@@ -11,6 +12,7 @@ const PIECES = {
   white: ['K', 'Q', 'R', 'R', 'B', 'B', 'N', 'N', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P']
 };
 const PLAYER_COLOR = 'white';
+const AI_DIFFICULTIES = ['Beginner', 'Easy', 'Intermediate', 'Advanced', 'Experienced'];
 const MOVE_DELAY_SECS = 1;
 const PIECE_ICONS = {
   p: faChessPawn,
@@ -21,15 +23,16 @@ const PIECE_ICONS = {
   k: faChessKing
 };
 
-const Chess = new Game();
+let Chess = new Game();
 const BoardContext = React.createContext();
 
 
 export default function App() {
   const [board, setBoard] = useState(Chess.exportJson());
-  const updateBoard = () => setBoard(Chess.exportJson());
   const [movingPiece, setMovingPiece] = useState(null);
-  const [aiLevel] = useState(1);
+  const [aiLevel, setAiLevel] = useState(1);
+
+  const updateBoard = () => setBoard(Chess.exportJson());
 
   const move = (tile, color, isValid) => {
     // Check if piece is being picked up or moved
@@ -59,14 +62,50 @@ export default function App() {
 
   return (
     <div className="App">
-      <BoardContext.Provider value={{ board, move, movingPiece }}>
+      <BoardContext.Provider value={{ board, updateBoard, movingPiece, move, aiLevel, setAiLevel }}>
         <Board />
-        {(board.checkMate && 'Checkmate!') || (board.check && 'Check!')}
+        <GameSettings />
         <TakenPieces color="black" />
         <TakenPieces color="white" />
       </BoardContext.Provider>
     </div>
   );
+}
+
+
+function GameSettings() {
+  const { board, updateBoard, aiLevel, setAiLevel } = useContext(BoardContext);
+
+  const newGame = () => {
+    Chess = new Game();
+    updateBoard();
+  }
+
+  const canUndoMove = () => board.turn === PLAYER_COLOR && Chess.getHistory().length >= 2;
+
+  const undoMove = () => {
+    if (!canUndoMove()) return;
+    const prevConfig = Chess.getHistory().slice().reverse()[1].configuration;
+    Chess = new Game(prevConfig);
+    updateBoard();
+  }
+
+  return (
+    <div>
+      <button type="button" onClick={newGame}>
+        New Game
+      </button>
+      <button type="button" onClick={undoMove} disabled={!canUndoMove()}>
+        Undo Move
+      </button>
+      <select value={aiLevel} onChange={(e) => setAiLevel(e.target.value)}>
+        {AI_DIFFICULTIES.map((name, i) => (
+          <option value={i} key={i}>{name}</option>
+        ))}
+      </select>
+      {(board.checkMate && 'Checkmate!') || (board.check && 'Check!')}
+    </div>
+  )
 }
 
 
