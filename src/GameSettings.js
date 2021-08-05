@@ -19,13 +19,13 @@ export default function GameSettings() {
 
   return (
     <div className="GameSettings">
-      <button type="button" className="GameSettings__input" onClick={() => newGame()}>
+      <button type="button" className="GameSettings__button" onClick={() => newGame()}>
         New Game
       </button>
-      <button type="button" className="GameSettings__input" onClick={undoMove} disabled={!canUndoMove()}>
+      <button type="button" className="GameSettings__button" onClick={undoMove} disabled={!canUndoMove()}>
         Undo Move
       </button>
-      <select value={aiLevel} onChange={(e) => setAiLevel(e.target.value)} className="GameSettings__input">
+      <select value={aiLevel} onChange={(e) => setAiLevel(e.target.value)} className="GameSettings__select">
         {AI_DIFFICULTIES.map((name, i) => (
           <option value={i} key={i}>AI: {name}</option>
         ))}
