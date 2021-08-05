@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import './GameSettings.scss';
 import { AI_DIFFICULTIES, PLAYER_COLOR } from './config';
 import { Chess, BoardContext } from './App';
 
@@ -17,7 +18,7 @@ export default function GameSettings() {
   }
 
   return (
-    <div>
+    <div className="GameSettings">
       <button type="button" onClick={() => newGame()}>
         New Game
       </button>
@@ -29,7 +30,6 @@ export default function GameSettings() {
           <option value={i} key={i}>{name}</option>
         ))}
       </select>
-      {(board.checkMate && 'Checkmate!') || (board.isFinished && 'Stalemate!') || (board.check && 'Check!')}
     </div>
   )
 }

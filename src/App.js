@@ -3,6 +3,7 @@ import './App.scss';
 import { PLAYER_COLOR, MOVE_DELAY_SECS } from './config';
 import { Game } from 'js-chess-engine';
 import Board from './Board';
+import Banner from './Banner';
 import GameSettings from './GameSettings';
 import TakenPieces from './TakenPieces';
 
@@ -76,13 +77,14 @@ export default function App() {
   }, [board, aiLevel]);
 
   return (
-    <div className="App">
+    <main className="App">
       <BoardContext.Provider value={{ newGame, board, updateBoard, movingPiece, move, aiLevel, setAiLevel }}>
         <Board />
-        <GameSettings />
+        <Banner />
         <TakenPieces color="black" />
         <TakenPieces color="white" />
+        <GameSettings />
       </BoardContext.Provider>
-    </div>
+    </main>
   );
 }
