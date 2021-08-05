@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './App.scss';
 import { PLAYER_COLOR, MOVE_DELAY_SECS } from './config';
 import { Game } from 'js-chess-engine';
@@ -16,13 +16,36 @@ export default function App() {
   const [movingPiece, setMovingPiece] = useState(null);
   const [aiLevel, setAiLevel] = useState(1);
 
-  const updateBoard = () => setBoard(Chess.exportJson());
+  // Updates board state and syncs it to local storage
+  const updateBoard = () => {
+    const boardObj = Chess.exportJson();
+    setBoard(boardObj);
+    localStorage.chessBoard = JSON.stringify(boardObj);
+  };
 
-  const newGame = (config) => {
+  // Starts game from a fresh or supplied state
+  const newGame = useCallback((config) => {
     Chess = config ? new Game(config) : new Game();
     updateBoard();
-  }
+  }, []);
 
+  // Restore game from local storage on initial render
+  useEffect(() => {
+    if (localStorage.chessBoard) {
+      const boardObj = JSON.parse(localStorage.chessBoard);
+      newGame(boardObj);
+    }
+    if (localStorage.chessAiLevel) {
+      setAiLevel(localStorage.chessAiLevel * 1);
+    }
+  }, [newGame]);
+
+  // Sync AI level to local storage
+  useEffect(() => {
+    localStorage.chessAiLevel = aiLevel.toString();
+  }, [aiLevel]);
+
+  // Pick up piece (show valid moves) or confirm a move
   const move = (tile, color, isValid) => {
     // Check if piece is being picked up or moved
     if (!movingPiece) {
