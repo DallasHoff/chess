@@ -1,0 +1,10 @@
+.Board {
+  height: calc(var(--app-width) - (var(--app-padding) * 2));
+  max-height: calc(var(--app-max-width) - (var(--app-padding) * 2));
+  &__inner {
+    display: grid;
+    height: 100%;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    grid-template-rows: repeat(8, minmax(0, 1fr));
+  }
+}

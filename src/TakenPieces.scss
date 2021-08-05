@@ -1,0 +1,10 @@
+.TakenPieces {
+  margin-top: calc(var(--app-padding) / 2);
+  padding: calc(var(--app-padding) / 2);
+  &--white {
+    background-color: var(--tile-dark);
+  }
+  &--black {
+    background-color: var(--tile-light);
+  }
+}
