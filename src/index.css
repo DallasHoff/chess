@@ -1,15 +1,18 @@
 :root {
   --app-width: 100vw;
   --app-max-width: 800px;
-  --app-padding: 3vw;
+  --app-padding: 1rem;
 
+  --hue: 200;
   --text-color: #fff;
-  --bg-color: #0a1324;
   --piece-dark: #000;
   --piece-light: #fff;
-  --tile-dark: #aaa;
-  --tile-light: #d3d3d3;
-  --indicator-color: #08b80880;
+  --tile-dark: hsl(var(--hue), 50%, 50%);
+  --tile-light: hsl(var(--hue), 50%, 65%);
+  --indicator-color: hsl(var(--hue), 80%, 80%);
+  --bg-color: hsl(var(--hue), 25%, 12%);
+  --box-color: hsl(var(--hue), 25%, 30%);
+  --subtle-color: hsl(var(--hue), 25%, 50%);
 }
 
 * {

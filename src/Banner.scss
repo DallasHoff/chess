@@ -1,3 +1,7 @@
 .Banner {
   grid-area: banner;
+  font-size: 1.4em;
+  text-align: center;
+  padding: calc(var(--app-padding) / 2);
+  background-color: var(--box-color);
 }

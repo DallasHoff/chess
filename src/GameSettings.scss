@@ -1,3 +1,18 @@
 .GameSettings {
   grid-area: game-settings;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--app-padding);
+  button {
+    appearance: none;
+  }
+  &__input {
+    cursor: pointer;
+    padding: calc(var(--app-padding) / 2);
+    background-color: var(--box-color);
+    border: 1px solid var(--subtle-color);
+    &:active {
+      background-color: var(--subtle-color);
+    }
+  }
 }

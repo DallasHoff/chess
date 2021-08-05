@@ -1,4 +1,5 @@
 .Piece {
+  display: inline-block;
   animation: move-piece 1s forwards;
   z-index: 1;
   &__icon {
