@@ -1,0 +1,61 @@
+.ColorPicker {
+  grid-area: color-picker;
+
+  --thumb-size: 26px;
+  --track-size: 10px;
+  --border-width: 1px;
+  --gradient: linear-gradient(90deg,#bf4040,#c6ad33,#72c038,#00c39b,#0095d6,#6e40c1,#ca35aa,#bf4040);
+
+  input[type=range] {
+    appearance: none;
+    width: 100%;
+    height: var(--track-size);
+    margin: calc((var(--thumb-size) - var(--track-size)) / 2) 0;
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 3px 2px var(--text-color);
+    }
+  }
+
+  @mixin range-thumb {
+    appearance: none;
+    cursor: grab;
+    width: var(--thumb-size);
+    height: var(--thumb-size);
+    margin-top: calc(-1 * (var(--thumb-size) - var(--track-size)) / 2);
+    background-color: var(--tile-dark);
+    border: var(--border-width) solid var(--subtle-color);
+    border-radius: 50%;
+    &:active {
+      cursor: grabbing;
+    }
+  }
+  @mixin range-track {
+    appearance: none;
+    width: 100%;
+    height: var(--track-size);
+    background-color: var(--text-color);
+    background-image: var(--gradient);
+    border: var(--border-width) solid var(--subtle-color);
+  }
+
+  // Separated rules since a browser will discard a rule where it does not recognize just one selector
+  input[type=range]::-webkit-slider-thumb {
+    @include range-thumb;
+  }
+  input[type=range]::-moz-range-thumb {
+    @include range-thumb;
+  }
+  input[type=range]::-ms-thumb {
+    @include range-thumb;
+  }
+  input[type=range]::-webkit-slider-runnable-track {
+    @include range-track;
+  }
+  input[type=range]::-moz-range-track {
+    @include range-track;
+  }
+  input[type=range]::-ms-track {
+    @include range-track;
+  }
+}

@@ -1,10 +1,24 @@
 .GameSettings {
   grid-area: game-settings;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(3, auto);
+  grid-template-areas: 
+    "new undo" 
+    "difficulty theme"
+    "color-picker color-picker";
   gap: var(--app-padding);
-  &__button,
-  &__select {
+
+  &__new {grid-area: new;}
+  &__undo {grid-area: undo;}
+  &__difficulty {grid-area: difficulty;}
+  &__theme {grid-area: theme;}
+
+  &__new,
+  &__undo,
+  &__theme,
+  &__difficulty {
+    font-size: 1rem;
     appearance: none;
     cursor: pointer;
     padding: calc(var(--app-padding) / 2);
@@ -17,17 +31,30 @@
       color: var(--subtle-color);
     }
   }
-  &__button {
+
+  &__new,
+  &__undo,
+  &__theme {
     &:active {
       background-color: var(--subtle-color);
     }
   }
-  &__select {
+
+  &__theme {
+    &--active {
+      background-color: var(--subtle-color);
+    }
+  }
+
+  &__difficulty {
     --arrow-size: 12px;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%23fff'><polygon points='0,25 100,25 50,75'/></svg>");
     background-size: var(--arrow-size);
     background-position: calc(100% - (var(--arrow-size) / 2)) center;
     background-repeat: no-repeat;
+    text-align: center;
+    text-align-last: center;
+    padding-left: calc(var(--arrow-size) * 2);
     padding-right: calc(var(--arrow-size) * 2);
   }
 }
