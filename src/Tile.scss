@@ -11,6 +11,11 @@
       background-color: var(--tile-dark);
     }
   }
+  // Cursor for interactive tiles
+  &--player-piece,
+  &--indicated {
+    cursor: pointer;
+  }
   // Valid move indicator
   &__indicator {
     position: absolute;
