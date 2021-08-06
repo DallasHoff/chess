@@ -31,7 +31,8 @@ export default function ColorPicker({hidden}) {
       const newHue = localStorage.themeHue * 1;
       changeHue(newHue);
     } else {
-      setHue(getCssVar('--hue') * 1);
+      const newHue = getCssVar('--hue') * 1;
+      changeHue(newHue);
     }
   }, [changeHue]);
 
