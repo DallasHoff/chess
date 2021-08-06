@@ -6,6 +6,15 @@ export const PIECES = {
   white: ['K', 'Q', 'R', 'R', 'B', 'B', 'N', 'N', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P']
 };
 
+export const PIECE_NAMES = {
+  k: 'King',
+  q: 'Queen',
+  r: 'Rook',
+  b: 'Bishop',
+  n: 'Knight',
+  p: 'Pawn'
+};
+
 export const PLAYER_COLOR = 'white';
 
 export const AI_DIFFICULTIES = ['Beginner', 'Easy', 'Intermediate', 'Advanced', 'Experienced'];

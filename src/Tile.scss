@@ -12,8 +12,7 @@
     }
   }
   // Cursor for interactive tiles
-  &--player-piece,
-  &--indicated {
+  &--interactive {
     cursor: pointer;
   }
   // Valid move indicator

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useRef, useLayoutEffect } from 'react';
 import './Tile.scss';
-import { PLAYER_COLOR } from './config';
+import { PLAYER_COLOR, PIECE_NAMES } from './config';
 import { BoardContext } from './App';
 import Piece from './Piece';
 
@@ -10,18 +10,24 @@ export default function Tile({pos}) {
   const { board, move, movingPiece } = useContext(BoardContext);
   const [pieceSymbol, setPieceSymbol] = useState(null);
   const [pieceColor, setPieceColor] = useState(null);
+  const [label, setLabel] = useState(pos);
   const [isValidMove, setIsValidMove] = useState(false);
-  const [classes, setClasses] = useState('Tile');
+  const [isInteractive, setIsInteractive] = useState(false);
 
-  // Update tile's piece (null values if tile is empty)
+  // Update tile's piece (null values if tile is empty) and label
   useEffect(() => {
     const newSymbol = board.pieces[pos] ?? null;
+    let newLabel = pos;
     setPieceSymbol(newSymbol);
     if (newSymbol) {
-      setPieceColor(newSymbol.toLowerCase() === newSymbol ? 'black' : 'white');
+      const newColor = newSymbol.toLowerCase() === newSymbol ? 'black' : 'white';
+      const pieceName = PIECE_NAMES[newSymbol.toLowerCase()];
+      newLabel += `: ${newColor} ${pieceName}`; 
+      setPieceColor(newColor);
     } else {
       setPieceColor(null);
     }
+    setLabel(newLabel);
   }, [pos, board]);
 
   // Show/hide valid move indicator
@@ -29,22 +35,37 @@ export default function Tile({pos}) {
     setIsValidMove(!!board.moves?.[movingPiece]?.find(v => v === pos));
   }, [pos, board, movingPiece]);
 
-  // Set tile classes
+  // Set whether tile is interactive
   useLayoutEffect(() => {
-    let newClasses = 'Tile';
-    // Tile has one of the player's pieces
-    if (pieceSymbol && pieceColor === PLAYER_COLOR) {
-      newClasses += ' Tile--player-piece';
+    // Tile has one of the player's pieces or 
+    // tile has the valid move indicator
+    if (
+      (pieceSymbol && pieceColor === PLAYER_COLOR) || 
+      isValidMove
+    ) {
+      setIsInteractive(true);
+    } else {
+      setIsInteractive(false);
     }
-    // Tile has the valid move indicator
-    if (isValidMove) {
-      newClasses += ' Tile--indicated';
-    }
-    setClasses(newClasses);
   }, [pieceSymbol, pieceColor, isValidMove]);
 
+  const handleClick = () => move(pos, pieceColor, isValidMove);
+
+  const handleKeyDown = (e) => {
+    // Move if enter or space is pressed
+    if (e.keyCode === 13 || e.keyCode === 32) {
+      handleClick();
+    }
+  }
+
   return (
-    <div className={classes} ref={tileRef} data-pos={pos} onClick={() => move(pos, pieceColor, isValidMove)}>
+    <div 
+    className={`Tile ${isInteractive ? 'Tile--interactive' : ''}`} 
+    tabIndex={isInteractive ? '0' : ''} 
+    ref={tileRef} 
+    aria-label={label} 
+    onClick={handleClick}
+    onKeyDown={handleKeyDown}>
       {pieceSymbol && 
         <Piece pos={pos} symbol={pieceSymbol} color={pieceColor} tileRef={tileRef} animate />
       }
