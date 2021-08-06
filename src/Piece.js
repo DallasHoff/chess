@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import React, { useState, useRef, useLayoutEffect } from 'react';
 import './Piece.scss';
 import { ROWS, COLS } from './config';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
@@ -21,7 +21,7 @@ export default function Piece({pos, symbol, color, tileRef, animate, size}) {
   const [classes, setClasses] = useState('');
 
   // Update piece icon, color, and classes
-  useEffect(() => {
+  useLayoutEffect(() => {
     setIcon(PIECE_ICONS[symbol.toLowerCase()]);
     setClasses(`Piece__icon Piece__icon--${color} fa-fw`);
   }, [symbol, color]);
