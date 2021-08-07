@@ -1,6 +1,6 @@
 import React, { useState, useRef, useLayoutEffect } from 'react';
 import './Piece.scss';
-import { ROWS, COLS } from './config';
+import { ROWS, COLS, MOVE_ANIMATION_SECS } from './config';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faChessPawn, faChessKnight, faChessBishop, faChessRook, faChessQueen, faChessKing } from '@fortawesome/free-solid-svg-icons';
 import { Chess } from './App';
@@ -52,10 +52,12 @@ export default function Piece({pos, symbol, color, tileRef, animate, size}) {
     const diffX = (fromX - toX) * tileSize;
     const diffY = (fromY - toY) * tileSize;
     // Do animation
-    pieceRef.current.style.animation = 'none';
-    void(pieceRef.current.offsetWidth); // trigger reflow to reset animation
-    pieceRef.current.style.animation = null;
     pieceRef.current.style.transform = `translate(${diffX}px, ${diffY}px)`;
+    pieceRef.current.style.animation = `move-piece ${MOVE_ANIMATION_SECS}s forwards`;
+    setTimeout(() => {
+      pieceRef.current.style.transform = `translate(0px, 0px)`;
+      pieceRef.current.style.animation = 'none';
+    }, MOVE_ANIMATION_SECS * 1000);
   }, [pos, tileRef, color, animate]);
 
   return (

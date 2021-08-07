@@ -18,4 +18,6 @@ export const PIECE_NAMES = {
 export const PLAYER_COLOR = 'white';
 
 export const AI_DIFFICULTIES = ['Beginner', 'Easy', 'Intermediate', 'Advanced', 'Experienced'];
+
 export const MOVE_DELAY_SECS = 1;
+export const MOVE_ANIMATION_SECS = 0.9;
